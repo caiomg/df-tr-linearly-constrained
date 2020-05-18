@@ -96,7 +96,7 @@ model = move_to_best_point(model, constraints);
 
 model.modeling_polynomials = compute_polynomial_models(model);
 if model.number_of_points < 2
-    [model, exitflag] = ensure_improvement(model, funcs, lb, ub, options);
+    [model, exitflag] = ensure_improvement(model, funcs, constraints, options);
 end
 
 

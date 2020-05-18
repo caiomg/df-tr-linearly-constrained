@@ -1,4 +1,4 @@
-function [model, exitflag] = ensure_improvement(model, funcs, bl, bu, options)
+function [model, exitflag] = ensure_improvement(model, funcs, constraints, options)
 % ENSURE_IMPROVEMENT - Improves the model by changing set of points
 % Calls the appropriate functions to add more points, exchange
 % existing points or rebuilding the model from scratch
@@ -8,6 +8,8 @@ function [model, exitflag] = ensure_improvement(model, funcs, bl, bu, options)
     STATUS_OLD_MODEL_REBUILT = 3;
     STATUS_MODEL_REBUILT = 4;    
     
+    bl = constraints.lb;
+    bu = constraints.ub;
 
     model_complete = is_complete(model);
     model_fl = is_lambda_poised(model, options);

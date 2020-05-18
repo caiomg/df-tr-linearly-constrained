@@ -1,4 +1,4 @@
-function [model, measure] = criticality_step(model, funcs, bl, bu, options)
+function [model, measure] = criticality_step(model, funcs, constraints, options)
 % CRITICALITY_STEP -- ensures model is sufficiently poised and with
 % a radius comparable to the gradient
 %
@@ -19,7 +19,7 @@ if has_distant_points(model, options) || is_old(model, options)
     model_changed = true;
 end
 while ~is_lambda_poised(model, options)
-    model = ensure_improvement(model, funcs, bl, bu, options);
+    model = ensure_improvement(model, funcs, constraints, options);
     model_changed = true;
 end
 if model_changed
@@ -35,7 +35,7 @@ while (model.radius > mu*measure)
         model_changed = true;
     end
     while ~is_lambda_poised(model, options)
-        model = ensure_improvement(model, funcs, bl, bu, options);
+        model = ensure_improvement(model, funcs, constraints, options);
         model_changed = true;
     end
     if model_changed

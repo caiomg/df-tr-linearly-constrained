@@ -50,7 +50,7 @@ for iter = 1:iter_max
     end
     % Criticality step -- if we are possibly close to the optimum
     if norm(measure_criticality(model, constraints)) <= eps_c
-        [model, crit_measure] = criticality_step(model, funcs, bl, bu, options);
+        [model, crit_measure] = criticality_step(model, funcs, constraints, options);
         criticality_step_performed = true;
         if crit_measure < tol_f
             break;
@@ -74,7 +74,7 @@ for iter = 1:iter_max
          norm(trial_step) < tol_radius) || ...
         (predicted_red < tol_f*abs(fval_current)*1e-3))
         rho = -inf;
-        [model, mchange_flag] = ensure_improvement(model, funcs, bl, bu, options);
+        [model, mchange_flag] = ensure_improvement(model, funcs, constraints, options);
     else
         % Evaluate objective at trial point
         [fval_trial, f_succeeded] = evaluate_new_fvalues(funcs, trial_point);
@@ -105,15 +105,15 @@ for iter = 1:iter_max
                 % This shouldn't happen
                 [model, mchange_flag] = ensure_improvement(model, ...
                                                            funcs, ...
-                                                           bl, bu, options);
+                                                           constraints, options);
                 % this mchange_flag is not being used (rho > eta_1)
             end
         else
              [model, mchange_flag] = try_to_add_point(model, ...
                                                       trial_point, ...
                                                       fval_trial, ...
-                                                      funcs, bl, bu, ...
-                                                      options);
+                                                      funcs, ...
+                                                      constraints, options);
              % if mchange_flag == 4, we had to rebuild the model
              % and the radius will be reduced
         end

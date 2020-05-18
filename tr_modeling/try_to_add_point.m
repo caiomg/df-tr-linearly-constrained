@@ -1,6 +1,6 @@
 function [model, exitflag] = try_to_add_point(model, new_point, ...
                                               new_fvalues, funcs, ...
-                                              bl, bu, options)
+                                              constraints, options)
 % TRY_TO_ADD_POINT - tries to add new known point to model
 % If it is not possible to add such point to the interpolation set,
 % makes a model improvement
@@ -8,6 +8,9 @@ function [model, exitflag] = try_to_add_point(model, new_point, ...
     % Step was not accepted. Smaller effort in including point
 
     STATUS_POINT_ADDED = 1;
+    
+    bl = constraints.lb;
+    bu = constraints.ub;
 
     % Test if fvalues can be added to the model (not nan or inf)
     good_fvalues = isempty(find(~isfinite(new_fvalues), 1));
@@ -28,6 +31,6 @@ function [model, exitflag] = try_to_add_point(model, new_point, ...
     end
     if ~good_fvalues || model_is_complete || ~point_added
         % Either add a geometry improving point or rebuild model
-        [model, exitflag] = ensure_improvement(model, funcs, bl, bu, options);
+        [model, exitflag] = ensure_improvement(model, funcs, constraints, options);
     end
 end
