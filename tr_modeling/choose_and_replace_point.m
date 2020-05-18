@@ -1,4 +1,4 @@
-function [model, success] = choose_and_replace_point(model, funcs, bl, bu, options)
+function [model, success] = choose_and_replace_point(model, funcs, constraints, options)
    
     pivot_threshold = options.exchange_threshold;
     radius = model.radius;
@@ -19,17 +19,19 @@ function [model, success] = choose_and_replace_point(model, funcs, bl, bu, optio
     [dim, points_num] = size(points_shifted);
     linear_terms = dim+1;
     
-    if isempty(bl)
-        bl = -inf(dim, 1);
+    lb = constraints.lb;
+    ub = constraints.ub;
+    if isempty(lb)
+        lb = -inf(dim, 1);
     end
-    if isempty(bu)
-        bu = inf(dim, 1);
+    if isempty(ub)
+        ub = inf(dim, 1);
     end
     tol_shift = 10*eps(max(1, max(abs(shift_center))));
     shift_point = @(x) x - shift_center;
-    unshift_point = @(x) max(min(x + shift_center, bu), bl);
-    bl_shifted = shift_point(bl);
-    bu_shifted = shift_point(bu);
+    unshift_point = @(x) max(min(x + shift_center, ub), lb);
+    bl_shifted = shift_point(lb);
+    bu_shifted = shift_point(ub);
     
     [~, piv_order] = sort(abs(pivot_values(1:points_num)));
     polynomials_num = length(pivot_polynomials);

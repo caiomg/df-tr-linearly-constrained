@@ -1,8 +1,11 @@
-function [model, success] = improve_model_nfp(model, funcs, bl, bu, options)
+function [model, success] = improve_model_nfp(model, funcs, constraints, options)
     
     rel_pivot_threshold = options.pivot_threshold;
     tol_radius = options.tol_radius;
     radius_factor = options.radius_factor;
+    
+    lb = constraints.lb;
+    ub = constraints.ub;
     
     radius = model.radius;
     pivot_threshold = rel_pivot_threshold*min(1, radius);
@@ -25,17 +28,17 @@ function [model, success] = improve_model_nfp(model, funcs, bl, bu, options)
              'Model too old. Should be calling rebuild model');
     end
 
-    if isempty(bl)
-        bl = -inf(dim, 1);
+    if isempty(lb)
+        lb = -inf(dim, 1);
     end
-    if isempty(bu)
-        bu = inf(dim, 1);
+    if isempty(ub)
+        ub = inf(dim, 1);
     end
     tol_shift = 10*eps(max(1, max(abs(shift_center))));
     shift_point = @(x) x - shift_center;
-    unshift_point = @(x) max(min(x + shift_center, bu), bl);
-    bl_shifted = shift_point(bl);
-    bu_shifted = shift_point(bu);
+    unshift_point = @(x) max(min(x + shift_center, ub), lb);
+    bl_shifted = shift_point(lb);
+    bu_shifted = shift_point(ub);
     
     % Test if the model is already FL but old
     % Distance measured in inf norm

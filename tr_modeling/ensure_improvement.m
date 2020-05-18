@@ -17,13 +17,13 @@ function [model, exitflag] = ensure_improvement(model, funcs, constraints, optio
     success = false;
     if ~model_complete && (~model_old || ~model_fl)
         % Calculate a new point to add
-        [model, success] = improve_model_nfp(model, funcs, bl, bu, options);
+        [model, success] = improve_model_nfp(model, funcs, constraints, options);
         if success
             exitflag = STATUS_POINT_ADDED;
         end
     elseif model_complete && ~model_old
         % Replace some point with a new one that improves geometry
-        [model, success] = choose_and_replace_point(model, funcs, bl, bu, options);
+        [model, success] = choose_and_replace_point(model, funcs, constraints, options);
         if success
             exitflag = STATUS_POINT_REPLACED;
         end
