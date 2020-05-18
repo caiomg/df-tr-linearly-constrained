@@ -23,8 +23,6 @@ fminunc_options = optimoptions('fminunc', 'Display', 'off', ...
 
 terminate_cutest_problem()
 clear global problem_path_cutest problem_name_cutest problem_data_cutest
-global problem_data_cutest
-clear results_unconstrained
 
 warning('off', 'cmg:ill_conditioned_system')
 warning('off', 'cmg:trial_not_decrease');
@@ -43,15 +41,15 @@ for n = 1:n_problems
     problem_name = unconstrained_problems{n};
     results_unconstrained(n).name = problem_name;
     
-    prob = setup_cutest_problem(problem_name, '../my_problems/');
+    [prob, prob_interface] = setup_cutest_problem(problem_name, '../my_problems/');
 
     % Objective
-    f_obj = @(x) get_cutest_objective(x);
+    f_obj = @(x) prob_interface.evaluate_objective(x);
     counter = evaluation_counter(f_obj);
     counter.set_max_count(10000);
     f = @(x) counter.evaluate(x);
 
-    x0 = prob.x;
+    x0 = prob_interface.x0;
 
     [x_fmin, fvalue_fmin] = fminunc(f, x0, fminunc_options);
     f_count_fmincon = counter.get_count();

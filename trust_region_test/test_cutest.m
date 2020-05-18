@@ -1,8 +1,4 @@
 
-terminate_cutest_problem()
-clear global problem_path_cutest problem_name_cutest problem_data_cutest
-global problem_data_cutest
-
 problem_name = 'HEART8LS';
 % problem_name = 'MGH10LS';
 problem_name = 'ROSENBR';
@@ -10,7 +6,7 @@ problem_name = 'ROSENBR';
 % problem_name = 'HS38';
 % problem_name = 'HEART6LS';
 % problem_name = 'STRATEC';
-problem_name = 'CAMEL6';
+problem_name = 'HS4';
 % problem_name = 'HS1';
 % problem_name = 'HS45';
 % problem_name = 'GULF';
@@ -24,10 +20,10 @@ fmincon_options = optimoptions('fmincon', 'Display', 'off', ...
                                'SpecifyObjectiveGradient', false);
                          
 
-prob = setup_cutest_problem(problem_name, '../my_problems/');
+[prob, prob_interface] = setup_cutest_problem(problem_name, '../my_problems/');
 
 % Objective
-f_obj = @(x) get_cutest_objective(x);
+f_obj = @(x) prob_interface.evaluate_objective(x);
 counter = evaluation_counter(f_obj);
 f = @(x) counter.evaluate(x);
 
@@ -76,6 +72,6 @@ fminsearch_options = optimset('Display', 'on', 'MaxFunEvals', 1e4);
 f_count_search = counter.get_count()
 counter.reset_count()
 
-terminate_cutest_problem()
+terminate_cutest_problem(problem_name, '../my_problems/')
 
 
