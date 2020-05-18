@@ -40,7 +40,7 @@ for n = 1:63
     options = [];
     options.iter_max = 1000; % just not to hang. REMOVE
     try
-        [x_trust, fvalue_trust] = trust_region({f}, x0, f(x0), lb, ub, options);
+        [x_trust, fvalue_trust] = trust_region({f}, x0, f(x0), constraints, options);
         f_count_trust = counter.get_count();
         results_linearly_constrained(n).fx = fvalue_trust;
         results_linearly_constrained(n).count = f_count_trust;

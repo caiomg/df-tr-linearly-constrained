@@ -63,7 +63,7 @@ for n = 1:n_problems
     options = [];
 
     try
-        [x_trust, fvalue_trust] = trust_region({f}, x0, f(x0), [], [], options);
+        [x_trust, fvalue_trust] = trust_region({f}, x0, f(x0), constraints, options);
         results_unconstrained(n).test.exception = [];
     catch this_exception
         x_trust = nan*x0;

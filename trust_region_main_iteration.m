@@ -1,4 +1,4 @@
-function [x, fval] = trust_region_main_iteration(funcs, model, bl, bu, options)
+function [x, fval] = trust_region_main_iteration(funcs, model, constraints, options)
 % TRUST_REGION_MAIN_ITERATION - 
 %   
 
@@ -28,6 +28,9 @@ x_current = model.center_point();
 sum_rho = 0;
 sum_rho_sqr = 0;
 delay_reduction = 0;
+
+bl = constraints.lb;
+bu = constraints.ub;
 
 
 for iter = 1:iter_max

@@ -9,7 +9,7 @@ problem_name = 'ROSENBR';
 problem_name = 'HS4';
 % problem_name = 'HS1';
 % problem_name = 'HS45';
-% problem_name = 'GULF';
+problem_name = 'GULF';
 % problem_name = 'HILBERTA';
 % problem_name = 'MDHOLE';
 
@@ -52,11 +52,14 @@ tr_options = struct('tol_radius', 1e-4, 'tol_f', 1e-5, ...
 tr_options = []
 tr_options.print_level = 1;
 
+constraints = setup_linear_constraints(prob_interface);
+
+
 
 x1 = [-0.66018183231354; 1.7615504264832];                
 x_tr = x0;  %x_tr = [x0, x1]; 
 fx = f(x0); %fx = [f(x0), f(x1)];
-[x_trust, fvalue_trust] = trust_region({f}, x_tr, [], bl, bu, tr_options)
+[x_trust, fvalue_trust] = trust_region({f}, x_tr, [], constraints, tr_options)
 
 f_count_trust = counter.get_count()
 counter.reset_count()
