@@ -66,7 +66,7 @@ for n = 1:numel(bound_constrained_solutions)
 
     print_results_only(problem_name, solution - fvalue_trust, f_count_trust,  results_bound_constrained(n).viol)
     if ~isempty(results_bound_constrained(n).exception)
-        'breakpoint'
+        'breakpoint';
     end
     'breakpoint line';
 
