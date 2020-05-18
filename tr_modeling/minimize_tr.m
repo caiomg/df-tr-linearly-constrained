@@ -1,26 +1,28 @@
 function [x, fval, exitflag] = minimize_tr(polynomial, x_tr_center, ...
-                                           radius, bl, bu)
+                                           radius, constraints)
 
     dim = size(x_tr_center, 1);
-    if isempty(bl)
-        bl = -inf(dim, 1);
+    lb = constraints.lb;
+    ub = constraints.ub;
+    if isempty(lb)
+        lb = -inf(dim, 1);
     end
-    if isempty(bu)
-        bu = inf(dim, 1);
+    if isempty(ub)
+        ub = inf(dim, 1);
     end
 
     % TR bounds
     bl_tr = x_tr_center - radius;
     bu_tr = x_tr_center + radius;
     % Joining TR bounds and decision variable bounds
-    bl_mod = max(bl, bl_tr);
-    bu_mod = min(bu, bu_tr);
+    bl_mod = max(lb, bl_tr);
+    bu_mod = min(ub, bu_tr);
 
     % Restoring feasibility at TR center
-    bl_active = x_tr_center <= bl;
-    bu_active = x_tr_center >= bu;
-    x_tr_center(bl_active) = bl(bl_active);
-    x_tr_center(bu_active) = bu(bu_active);
+    bl_active = x_tr_center <= lb;
+    bu_active = x_tr_center >= ub;
+    x_tr_center(bl_active) = lb(bl_active);
+    x_tr_center(bu_active) = ub(bu_active);
     
     [c, g, H] = get_matrices(polynomial);
     
@@ -44,5 +46,5 @@ function [x, fval, exitflag] = minimize_tr(polynomial, x_tr_center, ...
 
     [x, fval, exitflag] = solve_quadratic_problem(H, g, c, [], [], ...
                                                   [], [], bl_mod, bu_mod, x0);
-    x = project_to_bounds(x, bl, bu);
+    x = project_to_bounds(x, lb, ub);
 end

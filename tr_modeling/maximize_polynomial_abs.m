@@ -1,24 +1,23 @@
 function [new_points, new_pivot_values, new_points_abs] = ...
         maximize_polynomial_abs(polynomial, x_tr_center, radius, bl, ...
-                                bu, shift, unshift)
-    
+                                bu, shift_function, unshift_function)
+    constraints.lb = bl;
+    constraints.ub = bu;
     
     [new_point_min, pivot_min, exitflag_min] = minimize_tr(polynomial, ...
                                                       x_tr_center, ...
-                                                      radius, bl, ...
-                                                      bu);
-    new_point_min_abs = unshift(new_point_min);
-    new_point_min = shift(new_point_min_abs);
+                                                      radius, constraints);
+    new_point_min_abs = unshift_function(new_point_min);
+    new_point_min = shift_function(new_point_min_abs);
     pivot_min = evaluate_polynomial(polynomial, new_point_min);
     
     polynomial_max = multiply_p(polynomial, -1);
     [new_point_max, pivot_max, exitflag_max] = minimize_tr(polynomial_max, ...
                                                       x_tr_center, ...
-                                                      radius, bl, ...
-                                                      bu);
+                                                      radius, constraints);
     
-    new_point_max_abs = unshift(new_point_max);
-    new_point_max = shift(new_point_max_abs);
+    new_point_max_abs = unshift_function(new_point_max);
+    new_point_max = shift_function(new_point_max_abs);
     pivot_max = evaluate_polynomial(polynomial, new_point_max);
     
 
