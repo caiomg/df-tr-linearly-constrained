@@ -1,12 +1,12 @@
-function x = project_to_bounds(x, bl, bu)
+function x = project_to_bounds(x, lb, ub)
 
-    if isempty(bl)
-        bl = -inf(size(x));
+    if isempty(lb)
+        lb = -inf(size(x));
     end
-    if isempty(bu)
-        bu = inf(size(x));
+    if isempty(ub)
+        ub = inf(size(x));
     end
     
-    x = min(bu, max(bl, x));
+    x = min(ub, max(lb, x));
 
 end
