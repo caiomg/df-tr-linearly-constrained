@@ -50,6 +50,11 @@ end
 rel_pivot_threshold = options.pivot_threshold;
 initial_radius = options.initial_radius;
 
+if min(bu - bl) < initial_radius*rel_pivot_threshold
+    error('cmg:not_implemented', 'Bounds too tight. Not yet implemented');
+end
+
+
 n_initial_points = size(initial_points, 2);
 if n_initial_points == 1
     % Finding a random second point
