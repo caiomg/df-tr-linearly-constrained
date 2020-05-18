@@ -1,6 +1,5 @@
 function best_i = find_best_point(model, constraints, f)
 %FIND_BEST_POINT Searches for the best among model interpolation points
-%   bl, bu (optional) are lower and upper bounds on variables
 %   f (optional) is a function for comparison of points. It receives a
 %   vector with the function values of each point in the model and returns
 %   a corresponding numeric value
