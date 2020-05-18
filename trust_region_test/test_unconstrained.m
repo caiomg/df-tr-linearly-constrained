@@ -25,6 +25,7 @@ fminunc_options = optimoptions('fminunc', 'Display', 'off', ...
 warning('off', 'cmg:ill_conditioned_system')
 warning('off', 'cmg:trial_not_decrease');
 warning('off', 'cmg:geometry_degenerating');
+selected_unconstrained = struct('name', unconstrained_problems);
 
 results_unconstrained(n_problems).fval_matlab = [];
 results_unconstrained(n_problems).fval_trust = [];
@@ -39,7 +40,7 @@ for n = 1:n_problems
     problem_name = unconstrained_problems{n};
     results_unconstrained(n).name = problem_name;
     
-    solution = solutions_fmincon_unc(n).fval;
+    solution = solutions_reference_unconstrained(n).fval;
 
     [prob, prob_interface] = setup_cutest_problem(problem_name, '../my_problems/');
 
@@ -61,10 +62,11 @@ for n = 1:n_problems
     ub = constraints.ub;
 
     options = [];
+    options.iter_max = 1500;
 
     try
         [x_trust, fvalue_trust] = trust_region({f}, x0, f(x0), constraints, options);
-        results_unconstrained(n).test.exception = [];
+        results_unconstrained(n).exception = [];
     catch this_exception
         x_trust = nan*x0;
         fvalue_trust = nan;
@@ -74,9 +76,9 @@ for n = 1:n_problems
     f_count_trust = counter.get_count();
     bound_violation = norm(max(0, lb - x_trust) + max(0, x_trust - ub), 1);
 
-    results_unconstrained(n).test.fx = fvalue_trust;
-    results_unconstrained(n).test.count = f_count_trust;
-    results_unconstrained(n).test.viol = bound_violation;
+    results_unconstrained(n).fx = fvalue_trust;
+    results_unconstrained(n).count = f_count_trust;
+    results_unconstrained(n).viol = bound_violation;
 
     counter.reset_count();
     print_results_only(problem_name, solution - fvalue_trust, f_count_trust,  bound_violation)
