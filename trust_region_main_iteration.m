@@ -39,7 +39,7 @@ for iter = 1:iter_max
     end
     if true || is_lambda_poised(model, options)
         % Move among points that are part of the model
-        model = move_to_best_point(model, bl, bu);
+        model = move_to_best_point(model, constraints);
         fval_current = model.center_fvalues();
         x_current = model.center_point();
     end

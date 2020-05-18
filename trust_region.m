@@ -26,9 +26,13 @@ if nargin < 3
 end
 if isfield(constraints, 'lb')
     lb = constraints.lb;
+else
+    lb = [];
 end
 if isfield(constraints, 'ub')
-    ub = constraints.ub;
+        ub = constraints.ub;
+else
+    ub = [];
 end
 
 if (~isempty(lb) && ~isempty(find(initial_points(:, 1) < lb, 1))) || ...
@@ -88,7 +92,7 @@ end
 % Initializing model structure
 model = tr_model(initial_points, initial_fvalues, initial_radius);
 model = rebuild_model(model, options);
-model = move_to_best_point(model, lb, ub);
+model = move_to_best_point(model, constraints);
 
 model.modeling_polynomials = compute_polynomial_models(model);
 if model.number_of_points < 2

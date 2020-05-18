@@ -1,4 +1,4 @@
-function best_i = find_best_point(model, bl, bu, f)
+function best_i = find_best_point(model, constraints, f)
 %FIND_BEST_POINT Searches for the best among model interpolation points
 %   bl, bu (optional) are lower and upper bounds on variables
 %   f (optional) is a function for comparison of points. It receives a
@@ -9,13 +9,17 @@ function best_i = find_best_point(model, bl, bu, f)
     fvalues = model.fvalues;
     [dim, points_num] = size(points);
 
-    if nargin < 2 || isempty(bl)
-        bl = -inf(dim);
+    if isfield(constraints, 'lb')
+        lb = constraints.lb;
+    else
+        lb = -inf(dim, 1);
     end
-    if nargin < 3 || isempty(bu)
-        bu = inf(dim);
+    if isfield(constraints, 'ub')
+        ub = constraints.ub;
+    else
+        ub = inf(dim, 1);
     end
-    if nargin < 4 || isempty(f)
+    if nargin < 3 || isempty(f)
         % The first value from the vector
         f = @(v) v(1);
     end    
@@ -23,7 +27,7 @@ function best_i = find_best_point(model, bl, bu, f)
     min_f = inf;
     best_i = 0;
     for k = 1:points_num
-        if isempty(find(points(:, k) < bl | points(:, k) > bu, 1))
+        if isempty(find(points(:, k) < lb | points(:, k) > ub, 1))
             val = f(fvalues(:, k));
             if val < min_f
                 min_f = val;
