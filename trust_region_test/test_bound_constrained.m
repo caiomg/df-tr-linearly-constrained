@@ -3,19 +3,19 @@ warning('off', 'cmg:trial_not_decrease');
 warning('off', 'cmg:geometry_degenerating');
 warning('off', 'cmg:initial_point_infeasible')
 
-results_bound_constrained(n_problems).fval_matlab = [];
+bound_constrained_(n_problems).fval_matlab = [];
 results_bound_constrained(n_problems).fval_trust = [];
 results_bound_constrained(n_problems).fcount_matlab = [];
 results_bound_constrained(n_problems).fcount_trust = [];
 results_bound_constrained(n_problems).name = '';
 
 print_results_title()
-for n = 1:numel(solutions_fmincon)
+for n = 1:numel(bound_constrained_solutions)
     
     terminate_cutest_problem()
 
-    problem_name = solutions_fmincon(n).name;
-    solution = solutions_fmincon(n).fval;
+    problem_name = bound_constrained_solutions(n).name;
+    solution = bound_constrained_solutions(n).fval;
     results_bound_constrained(n).name = problem_name;
     
     [prob, prob_interface] = setup_cutest_problem(problem_name, '../my_problems/');

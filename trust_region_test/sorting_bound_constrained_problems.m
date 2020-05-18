@@ -12,4 +12,6 @@ for k = 1:max_vars
     [~, indices_problems] = sort(n_bounds);
     problems_per_variables{k} = selected_linear_problems(indices_problems);
 end
-selected_problems = [problems_per_variables{:}];
+selected_bound_constrained_problems = [problems_per_variables{:}];
+
+bound_constrained_solutions = compute_solutions_fmincon(selected_bound_constrained_problems)
