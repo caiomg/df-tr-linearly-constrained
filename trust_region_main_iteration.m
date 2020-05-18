@@ -66,7 +66,7 @@ for iter = 1:iter_max
     end
     
     % Compute step
-    [trial_point, predicted_red] = solve_tr_subproblem(model, bl, bu, options);
+    [trial_point, predicted_red] = solve_tr_subproblem(model, constraints, options);
     trial_step = trial_point - x_current;
 
     if ((predicted_red < tol_radius*1e-2) || ...
