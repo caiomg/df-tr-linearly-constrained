@@ -21,8 +21,6 @@ fminunc_options = optimoptions('fminunc', 'Display', 'off', ...
                                'SpecifyObjectiveGradient', false, ...
                                'Algorithm', 'quasi-newton');
 
-terminate_cutest_problem()
-clear global problem_path_cutest problem_name_cutest problem_data_cutest
 
 warning('off', 'cmg:ill_conditioned_system')
 warning('off', 'cmg:trial_not_decrease');
@@ -41,6 +39,8 @@ for n = 1:n_problems
     problem_name = unconstrained_problems{n};
     results_unconstrained(n).name = problem_name;
     
+    solution = solutions_fmincon_unc(n).fval;
+
     [prob, prob_interface] = setup_cutest_problem(problem_name, '../my_problems/');
 
     % Objective
@@ -51,30 +51,36 @@ for n = 1:n_problems
 
     x0 = prob_interface.x0;
 
-    [x_fmin, fvalue_fmin] = fminunc(f, x0, fminunc_options);
-    f_count_fmincon = counter.get_count();
-    counter.reset_count();
     
-    results_unconstrained(n).ref.fx = fvalue_fmin;
-    results_unconstrained(n).ref.count = f_count_fmincon;
-    results_unconstrained(n).ref.viol = 0;
+    constraints = setup_linear_constraints(prob_interface);
+    Aineq = constraints.Aineq;
+    bineq = constraints.bineq;
+    Aeq = constraints.Aeq;
+    beq = constraints.beq;
+    lb = constraints.lb;
+    ub = constraints.ub;
 
     options = [];
 
     try
         [x_trust, fvalue_trust] = trust_region({f}, x0, f(x0), [], [], options);
-        f_count_trust = counter.get_count();
-        results_unconstrained(n).test.fx = fvalue_trust;
-        results_unconstrained(n).test.count = f_count_trust;
-        results_unconstrained(n).test.viol = 0;
+        results_unconstrained(n).test.exception = [];
     catch this_exception
-        results_unconstrained(n).test.count = counter.get_count();
+        x_trust = nan*x0;
+        fvalue_trust = nan;
         results_unconstrained(n).test.exception = this_exception;
     end
 
-    counter.reset_count();
-    fprintf(1, format_test_result(results_unconstrained(n)));
+    f_count_trust = counter.get_count();
+    bound_violation = norm(max(0, lb - x_trust) + max(0, x_trust - ub), 1);
 
-    terminate_cutest_problem()
+    results_unconstrained(n).test.fx = fvalue_trust;
+    results_unconstrained(n).test.count = f_count_trust;
+    results_unconstrained(n).test.viol = bound_violation;
+
+    counter.reset_count();
+    print_results_only(problem_name, solution - fvalue_trust, f_count_trust,  bound_violation)
+    
+    terminate_cutest_problem(problem_name, '../my_problems/')
 
 end
