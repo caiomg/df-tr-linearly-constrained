@@ -24,6 +24,6 @@ function m = measure_criticality(model, constraints)
     
     % Projected gradient
     x_center = model.center_point();
-    m = min(bu, max(bl, (x_center - grad))) - x_center;
+    m = min(ub, max(lb, (x_center - grad))) - x_center;
 
 end
