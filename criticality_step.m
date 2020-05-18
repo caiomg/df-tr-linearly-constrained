@@ -25,7 +25,7 @@ end
 if model_changed
     model.modeling_polynomials = compute_polynomial_models(model);
 end
-measure = norm(measure_criticality(model, bl, bu));
+measure = norm(measure_criticality(model, constraints));
 while (model.radius > mu*measure)
     model.radius = omega*model.radius;
 
@@ -42,7 +42,7 @@ while (model.radius > mu*measure)
         model.modeling_polynomials = compute_polynomial_models(model);
     end
 
-    measure = norm(measure_criticality(model, bl, bu));
+    measure = norm(measure_criticality(model, constraints));
     if (model.radius < tol_radius || (beta*measure < tol_f) && ...
             model.radius < 100*tol_radius)
         % Better break.

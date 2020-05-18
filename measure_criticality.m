@@ -1,4 +1,4 @@
-function m = measure_criticality(model, bl, bu)
+function m = measure_criticality(model, constraints)
     % MEASURE_CRITICALITY gives the gradient of the model, calculated
     % in absolute coordinates in the current point.
     %
@@ -9,11 +9,15 @@ function m = measure_criticality(model, bl, bu)
     %    - If one desires handle constraints, other criticality
     %    measures need to be considered
 
-    if nargin < 2 || isempty(bl)
-        bl = -inf;
+    if isfield(constraints, 'lb') && ~isempty(constraints.lb)
+        lb = constraints.lb;
+    else
+        lb = -inf;
     end
-    if nargin < 3 || isempty(bu)
-        bu = inf;
+    if isfield(constraints, 'ub') && ~isempty(constraints.ub)
+        ub = constraints.ub;
+    else
+        ub = inf;
     end
     % Just the gradient, measured on the tr_center
     [~, grad] = get_model_matrices(model, 0);

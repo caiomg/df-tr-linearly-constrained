@@ -49,7 +49,7 @@ for iter = 1:iter_max
         err_model = check_interpolation(model);
     end
     % Criticality step -- if we are possibly close to the optimum
-    if norm(measure_criticality(model, bl, bu)) <= eps_c
+    if norm(measure_criticality(model, constraints)) <= eps_c
         [model, crit_measure] = criticality_step(model, funcs, bl, bu, options);
         criticality_step_performed = true;
         if crit_measure < tol_f
