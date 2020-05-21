@@ -1,7 +1,7 @@
 problems_per_variables = {};
 
-bcon_ind = [problem_data(:).bound_constrained];
-bncon_problems = problem_data(bcon_ind);
+bcon_ind = [problem_data_bound_constrained(:).bound_constrained];
+bncon_problems = problem_data_bound_constrained(bcon_ind);
 
 max_vars = 15
 

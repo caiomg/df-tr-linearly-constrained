@@ -3,6 +3,7 @@ warning('off', 'cmg:trial_not_decrease');
 warning('off', 'cmg:geometry_degenerating');
 warning('off', 'cmg:initial_point_infeasible')
 
+clear results_bound_constrained
 bound_constrained_(n_problems).fval_matlab = [];
 results_bound_constrained(n_problems).fval_trust = [];
 results_bound_constrained(n_problems).fcount_matlab = [];
