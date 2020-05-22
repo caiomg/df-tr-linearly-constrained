@@ -30,10 +30,6 @@ sum_rho = 0;
 sum_rho_sqr = 0;
 delay_reduction = 0;
 
-bl = constraints.lb;
-bu = constraints.ub;
-
-
 for iter = 1:iter_max
     if (model.radius < tol_radius)
         break
