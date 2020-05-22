@@ -27,6 +27,10 @@ warning('off', 'cmg:trial_not_decrease');
 warning('off', 'cmg:geometry_degenerating');
 selected_unconstrained = struct('name', unconstrained_problems);
 
+if exist('solutions_reference_unconstrained', 'var') ~= 1
+    solutions_reference_unconstrained = compute_solutions_fmincon(selected_unconstrained);
+end
+
 results_unconstrained(n_problems).fval_matlab = [];
 results_unconstrained(n_problems).fval_trust = [];
 results_unconstrained(n_problems).fcount_matlab = [];
