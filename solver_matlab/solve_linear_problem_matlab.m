@@ -12,7 +12,20 @@ function [x, fval, status] = solve_linear_problem_matlab(f, c, Aineq, bineq, Aeq
     linprog_problem.options = optimoptions('linprog', ...
                                            'Display', 'off', ...
                                            'Algorithm', 'dual-simplex');
-    [x, fval, exitflag, output] = linprog(linprog_problem);
+    try
+        [x, ~, exitflag] = linprog(linprog_problem);
+        fval = f'*x + c;
+    catch linprog_error
+        if strcmp(linprog_error.identifier, 'optim:linprog:CoefficientsTooLarge')
+            exitflag = -1;
+            linprog_problem.f = 0*f;
+            % Just trying to return a feasible point
+            x = linprog(linprog_problem);
+            fval = f'*x + c;
+        else
+            rethrow(linprog_error);
+        end
+    end
     if exitflag >= 0
         status = 0;
     else
