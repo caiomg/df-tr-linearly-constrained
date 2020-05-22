@@ -9,8 +9,8 @@ problem_name = 'ROSENBR';
 problem_name = 'HS4';
 % problem_name = 'HS1';
 % problem_name = 'HS45';
-problem_name = 'GULF';
-% problem_name = 'HILBERTA';
+problem_name = 'DENSCHNE';
+% problem_name = 'OSBORNEB';
 % problem_name = 'MDHOLE';
 
 fminunc_options = optimoptions('fminunc', 'Display', 'off', ...
@@ -51,6 +51,10 @@ tr_options = struct('tol_radius', 1e-4, 'tol_f', 1e-5, ...
                     'iter_max', 10000, 'print_level', 1);
 tr_options = []
 tr_options.print_level = 1;
+tr_options.debug = true;
+tr_options.tol_radius = 1e-6;
+tr_options.inspect_iteration = 25;
+%tr_options.pivot_threshold = 0.05;
 
 constraints = setup_linear_constraints(prob_interface);
 
