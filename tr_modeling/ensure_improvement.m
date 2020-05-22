@@ -8,9 +8,6 @@ function [model, exitflag] = ensure_improvement(model, funcs, constraints, optio
     STATUS_OLD_MODEL_REBUILT = 3;
     STATUS_MODEL_REBUILT = 4;    
     
-    bl = constraints.lb;
-    bu = constraints.ub;
-
     model_complete = is_complete(model);
     model_fl = is_lambda_poised(model, options);
     model_old = is_old(model, options);

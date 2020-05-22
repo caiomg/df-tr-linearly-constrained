@@ -9,9 +9,6 @@ function [model, exitflag] = try_to_add_point(model, new_point, ...
 
     STATUS_POINT_ADDED = 1;
     
-    bl = constraints.lb;
-    bu = constraints.ub;
-
     % Test if fvalues can be added to the model (not nan or inf)
     good_fvalues = isempty(find(~isfinite(new_fvalues), 1));
     if good_fvalues
