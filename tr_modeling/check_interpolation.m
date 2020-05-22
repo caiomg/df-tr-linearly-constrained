@@ -27,7 +27,8 @@ for k = 1:n_functions
             max_diff = difference;
         end
         if abs(difference) > max(tol_1*max(abs(model.fvalues(k, :))), tol_2)
-            warning('cmg:tr_interpolation_error', 'Interpolation error');
+            warning('cmg:tr_interpolation_error', ...
+                    'Interpolation error: %g', abs(difference));
         end
     end
 end

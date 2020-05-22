@@ -19,6 +19,7 @@ radius_max = options.radius_max;
 print_level = options.print_level;
 
 debug_on = options.debug;
+inspect_iteration = options.inspect_iteration;
     
 
 rho = 0;
@@ -47,6 +48,10 @@ for iter = 1:iter_max
 
     if debug_on
         err_model = check_interpolation(model);
+        nfp_error = check_nfp_polynomials(model);
+        if iter == inspect_iteration
+            'debug';
+        end
     end
     % Criticality step -- if we are possibly close to the optimum
     if norm(measure_criticality(model, constraints)) <= eps_c
