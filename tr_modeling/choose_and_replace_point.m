@@ -10,6 +10,7 @@ function [model, success] = choose_and_replace_point(model, funcs, bl, bu, optio
     shift_center = model.points_abs(:, 1);
     tr_center = model.tr_center;
     tr_center_x = model.points_shifted(:, tr_center);
+    tr_center_abs = model.points_abs(:, tr_center);
 
     pivot_values = model.pivot_values;
     pivot_polynomials = model.pivot_polynomials;
@@ -46,6 +47,9 @@ function [model, success] = choose_and_replace_point(model, funcs, bl, bu, optio
             maximize_polynomial_abs(pivot_polynomials(pos), tr_center_x, radius, ...
                       bl_shifted, bu_shifted, shift_point, ...
                                     unshift_point);
+        [new_points_shifted, new_pivots, new_points_unshifted] = ...
+            compute_new_point(pivot_polynomials(pos), shift_center, tr_center_abs, ...
+                              radius, bl, bu);
         point_found = false;
         for found_i = 1:size(new_points_shifted, 2)
             new_pivot_value = new_pivots(found_i);

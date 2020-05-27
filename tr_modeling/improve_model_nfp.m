@@ -10,6 +10,7 @@ function [model, success] = improve_model_nfp(model, funcs, bl, bu, options)
     [dim, p_ini] = size(points_shifted);
     shift_center = model.points_abs(:, 1);
     tr_center = model.tr_center;
+    tr_center_abs = model.points_abs(:, tr_center);
 
     pivot_polynomials = model.pivot_polynomials;
     polynomials_num = length(pivot_polynomials);
@@ -63,6 +64,9 @@ function [model, success] = improve_model_nfp(model, funcs, bl, bu, options)
                 maximize_polynomial_abs(polynomial, tr_center_pt, radius_used, ...
                           bl_shifted, bu_shifted, shift_point, ...
                                         unshift_point);
+            [new_points_shifted, new_pivots, new_points_unshifted] = ...
+                compute_new_point(polynomial, shift_center, tr_center_abs, ...
+                                  radius, bl, bu);
             point_found = false;
             for found_i = 1:size(new_points_shifted, 2)
                 new_pivot_value = new_pivots(found_i);
