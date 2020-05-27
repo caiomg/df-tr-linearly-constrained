@@ -69,7 +69,7 @@ function [model, success] = improve_model_nfp(model, funcs, constraints, options
                                         unshift_point);
             [new_points_shifted, new_pivots, new_points_unshifted] = ...
                 compute_new_point(polynomial, shift_center, tr_center_abs, ...
-                                  radius, bl, bu);
+                                  radius, constraints);
             point_found = false;
             for found_i = 1:size(new_points_shifted, 2)
                 new_pivot_value = new_pivots(found_i);

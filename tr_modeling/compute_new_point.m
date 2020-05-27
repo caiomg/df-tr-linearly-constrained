@@ -1,20 +1,20 @@
 function [new_points_shifted, new_pivot_values, new_points_abs] = ...
         compute_new_point(polynomial, shift_center, tr_center_abs, ...
-                          radius, lb, ub)
+                          radius, constraints)
     
     % Shift to origin
     center_shifted = tr_center_abs - shift_center;
     polynomial_origin = shift_polynomial(polynomial, -center_shifted);
 
     [new_point_min_abs, ~, exitflag_min] = ...
-        minimize_tr(polynomial_origin, tr_center_abs, radius, lb, ub);
+        minimize_tr(polynomial_origin, tr_center_abs, radius, constraints);
     
     new_point_min_shifted = new_point_min_abs - shift_center;
     pivot_min = evaluate_polynomial(polynomial, new_point_min_shifted);
     
     polynomial_max = multiply_p(polynomial_origin, -1);
     [new_point_max_abs, ~, exitflag_max] = ...
-        minimize_tr(polynomial_max, tr_center_abs, radius, lb, ub);
+        minimize_tr(polynomial_max, tr_center_abs, radius, constraints);
     
     new_point_max_shifted = new_point_max_abs - shift_center;
     pivot_max = evaluate_polynomial(polynomial, new_point_max_shifted);
