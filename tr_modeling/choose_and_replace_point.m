@@ -19,20 +19,6 @@ function [model, success] = choose_and_replace_point(model, funcs, constraints, 
     [dim, points_num] = size(points_shifted);
     linear_terms = dim+1;
     
-    lb = constraints.lb;
-    ub = constraints.ub;
-    if isempty(lb)
-        lb = -inf(dim, 1);
-    end
-    if isempty(ub)
-        ub = inf(dim, 1);
-    end
-    tol_shift = 10*eps(max(1, max(abs(shift_center))));
-    shift_point = @(x) x - shift_center;
-    unshift_point = @(x) max(min(x + shift_center, ub), lb);
-    bl_shifted = shift_point(lb);
-    bu_shifted = shift_point(ub);
-    
     [~, piv_order] = sort(abs(pivot_values(1:points_num)));
     polynomials_num = length(pivot_polynomials);
    
@@ -45,10 +31,6 @@ function [model, success] = choose_and_replace_point(model, funcs, constraints, 
         success = false;
     else
         current_pivot_value = pivot_values(pos);
-        [new_points_shifted, new_pivots, new_points_unshifted] = ...
-            maximize_polynomial_abs(pivot_polynomials(pos), tr_center_x, radius, ...
-                      bl_shifted, bu_shifted, shift_point, ...
-                                    unshift_point);
         [new_points_shifted, new_pivots, new_points_unshifted] = ...
             compute_new_point(pivot_polynomials(pos), shift_center, tr_center_abs, ...
                               radius, constraints);

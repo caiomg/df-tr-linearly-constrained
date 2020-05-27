@@ -4,9 +4,6 @@ function [model, success] = improve_model_nfp(model, funcs, constraints, options
     tol_radius = options.tol_radius;
     radius_factor = options.radius_factor;
     
-    lb = constraints.lb;
-    ub = constraints.ub;
-    
     radius = model.radius;
     pivot_threshold = rel_pivot_threshold*min(1, radius);
     points_shifted = model.points_shifted;
@@ -28,18 +25,6 @@ function [model, success] = improve_model_nfp(model, funcs, constraints, options
              'Model too old. Should be calling rebuild model');
     end
 
-    if isempty(lb)
-        lb = -inf(dim, 1);
-    end
-    if isempty(ub)
-        ub = inf(dim, 1);
-    end
-    tol_shift = 10*eps(max(1, max(abs(shift_center))));
-    shift_point = @(x) x - shift_center;
-    unshift_point = @(x) max(min(x + shift_center, ub), lb);
-    bl_shifted = shift_point(lb);
-    bu_shifted = shift_point(ub);
-    
     % Test if the model is already FL but old
     % Distance measured in inf norm
     tr_center_pt = points_shifted(:, tr_center);
@@ -63,10 +48,6 @@ function [model, success] = improve_model_nfp(model, funcs, constraints, options
                 orthogonalize_to_other_polynomials(pivot_polynomials, poly_i, ...
                                                    points_shifted, p_ini);
 
-            [new_points_shifted, new_pivots, new_points_unshifted] = ...
-                maximize_polynomial_abs(polynomial, tr_center_pt, radius_used, ...
-                          bl_shifted, bu_shifted, shift_point, ...
-                                        unshift_point);
             [new_points_shifted, new_pivots, new_points_unshifted] = ...
                 compute_new_point(polynomial, shift_center, tr_center_abs, ...
                                   radius, constraints);
