@@ -46,10 +46,9 @@ for n = 1:numel(bound_constrained_solutions)
         f_count_trust = counter.get_count();
         results_bound_constrained(n).fx = fvalue_trust;
         results_bound_constrained(n).count = f_count_trust;
-        bound_violation = norm(max(0, lb - x_trust) + max(0, x_trust - ub), 1);
-        eqs_violation = norm(Aeq*x_trust - beq, 1);
-        ineqs_violation = norm(max(0, Aineq*x_trust - bineq), 1);
-        total_violation = bound_violation + eqs_violation + ineqs_violation;
+        [ineqs_violation, eqs_violation, bounds_violation] = ...
+            linear_constraints_violation(x_trust, constraints);
+        total_violation = bounds_violation + eqs_violation + ineqs_violation;
         results_bound_constrained(n).viol = total_violation;
         results_bound_constrained(n).exception = [];
     catch this_exception
