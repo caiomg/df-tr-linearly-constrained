@@ -15,6 +15,10 @@ radius_factor = options.radius_factor;
 
 iter_max = options.iter_max;
 
+tolerances.linear_ineq = options.tol_linear_ineq;
+tolerances.linear_eq = options.tol_linear_eq;
+tolerances.bounds = 0; % Not implemented for positive values
+
 radius_max = options.radius_max;
 print_level = options.print_level;
 
