@@ -13,8 +13,8 @@ for n = 1:63
     
     terminate_cutest_problem()
 
-    problem_name = solutions_fmincon(n).name;
-    solution = solutions_fmincon.fval;
+    problem_name = solutions_linearly_constrained(n).name;
+    solution = solutions_linearly_constrained.fval;
     results_linearly_constrained(n).name = problem_name;
     
     [prob, prob_interface] = setup_cutest_problem(problem_name, '../my_problems/');
@@ -44,9 +44,9 @@ for n = 1:63
         f_count_trust = counter.get_count();
         results_linearly_constrained(n).fx = fvalue_trust;
         results_linearly_constrained(n).count = f_count_trust;
-        bound_violation = norm(max(0, lb - x_trust) + max(0, x_trust - ub), 1);
-        eqs_violation = norm(Aeq*x_trust - beq, 1);
-        ineqs_violation = norm(max(0, Aineq*x_trust - bineq), 1);
+        [ineqs_violation, eqs_violation, bounds_violation] = ...
+            linear_constraints_violation(x_trust, constraints);
+        total_violation = bounds_violation + eqs_violation + ineqs_violation;
         total_violation = bound_violation + eqs_violation + ineqs_violation;
         results_linearly_constrained(n).viol = total_violation;
         results_linearly_constrained(n).exception = [];
