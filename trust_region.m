@@ -93,24 +93,26 @@ if n_initial_points == 1
     else
         N = eye(dim);
     end
-    perturbation_dim = size(N, 2);
-    % Finding a random second point
-    old_seed = rng('default');
-    perturbation = rand(perturbation_dim, 1);
-    rng(old_seed);
-    while norm(perturbation, inf) < rel_pivot_threshold
-        % Second point must not be too close
-        perturbation = 2*perturbation;
+    nullspace_dim = size(N, 2);
+    if nullspace_dim > 0
+        % Finding a random second point
+        old_seed = rng('default');
+        perturbation = rand(nullspace_dim, 1);
+        rng(old_seed);
+        while norm(perturbation, inf) < rel_pivot_threshold
+            % Second point must not be too close
+            perturbation = 2*perturbation;
+        end
+        second_point = initial_points(:, 1) + N*(perturbation - 0.5)*initial_radius;
+
+        second_point = ...
+            project_to_feasible_polytope(second_point, Aineq, bineq, Aeq, beq, lb, ub);
+
+        initial_points(:, 2) = second_point;
+        n_initial_points = 2;
+        assert(norm(initial_points(:, 1) - initial_points(:, 2), inf) ...
+               - initial_radius < 10*eps(1));
     end
-    second_point = initial_points(:, 1) + N*(perturbation - 0.5)*initial_radius;
-    
-    second_point = ...
-        project_to_feasible_polytope(second_point, Aineq, bineq, Aeq, beq, lb, ub);
-    
-    initial_points(:, 2) = second_point;
-    n_initial_points = 2;
-    assert(norm(initial_points(:, 1) - initial_points(:, 2), inf) ...
-           - initial_radius < 10*eps(1));
 end
 % Checking feasibility
 for n = 1:n_initial_points
@@ -137,7 +139,11 @@ model.modeling_polynomials = compute_polynomial_models(model);
 if model.number_of_points < 2
     [model, exitflag] = ensure_improvement(model, funcs, constraints, options);
 end
-
-[x, fval] = trust_region_main_iteration(funcs, model, constraints, options);
+if model.number_of_points < 2
+    x = initial_points(:, 1);
+    fval = initial_fvalues(1, 1);
+else
+    [x, fval] = trust_region_main_iteration(funcs, model, constraints, options);
+end
 
 end
