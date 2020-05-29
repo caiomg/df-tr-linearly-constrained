@@ -82,7 +82,8 @@ end
 rel_pivot_threshold = options.pivot_threshold;
 initial_radius = options.initial_radius;
 
-if min(ub - lb) < initial_radius*rel_pivot_threshold
+if degrees_of_freedom(constraints, initial_points(:, 1), ...
+                      rel_pivot_threshold*initial_radius) < dim
     error('cmg:not_implemented', 'Bounds too tight. Not yet implemented');
 end
 
