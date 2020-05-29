@@ -12,23 +12,20 @@ function [x, fval, status] = solve_quadratic_problem_matlab(H, g, ...
         x0 = min(ub, max(lb, x0));
     end
     
-    if norm(H, inf) > 10*eps(norm(g))
-        f = @(x) quadratic(H, g, c, x);
-        
-        fmincon_options = optimoptions(@fmincon, 'Display', 'off', ...
-                                       'Algorithm', 'interior-point', ...
-                                       'SpecifyObjectiveGradient', true);
-        [x, fval, exitflag] = fmincon(f, x0, Aineq, bineq, Aeq, beq, lb, ...
-                                      ub, [], fmincon_options);
-        if exitflag > 0 && exitflag ~= 3
-            status = 0;
-        else
-            status = -200;
-        end
+    f = @(x) quadratic(H, g, c, x);
+
+    fmincon_options = optimoptions(@fmincon, 'Display', 'off', ...
+                                   'Algorithm', 'interior-point', ...
+                                   'SpecifyObjectiveGradient', true);
+    [x, fval, exitflag] = fmincon(f, x0, Aineq, bineq, Aeq, beq, lb, ...
+                                  ub, [], fmincon_options);
+    if exitflag > 0 && exitflag ~= 3
+        status = 0;
     else
-        [x, fval, status] = solve_linear_problem_matlab(g, c, Aineq, ...
-                                                        bineq, Aeq, ...
-                                                        beq, lb, ub, x0);
-        
+        status = -200;
+    end
+    if status < 0 && norm(H, inf) <= 10*eps(norm(g))
+        [x, fval, status] = ...
+            solve_linear_problem_matlab(g, c, Aineq, bineq, Aeq, beq, lb, ub, x0);
     end
 end
