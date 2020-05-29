@@ -60,7 +60,7 @@ for n = 1:63
     
     
 
-    print_results_only(problem_name, solution - fvalue_trust, results_linearly_constrained(n).count,  results_linearly_constrained(n).viol)
+    print_results_only(problem_name, solution - results_linearly_constrained(n).fx, results_linearly_constrained(n).count,  results_linearly_constrained(n).viol)
 
 
 end
