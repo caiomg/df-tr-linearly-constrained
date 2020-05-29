@@ -1,4 +1,5 @@
-function [pivot_polynomials, pivot_value, success] = choose_pivot_polynomial(pivot_polynomials, points, initial_i, final_i, tol)
+function [pivot_polynomials, pivot_value, success] = ...
+        choose_pivot_polynomial(pivot_polynomials, points, initial_i, final_i, tol)
 
     last_point = initial_i - 1;
     incumbent_point = points(:, initial_i);
@@ -16,7 +17,7 @@ function [pivot_polynomials, pivot_value, success] = choose_pivot_polynomial(piv
             pivot_value = val;
             break
         else
-            false; % We won't even save the orthogonalization
+            'pass'; % We won't even save the orthogonalization
         end
     end
     
