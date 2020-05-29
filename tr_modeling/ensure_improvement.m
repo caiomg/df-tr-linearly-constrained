@@ -9,7 +9,7 @@ function [model, exitflag] = ensure_improvement(model, funcs, constraints, optio
     STATUS_MODEL_REBUILT = 4;    
     
     model_complete = is_complete(model);
-    model_fl = is_lambda_poised(model, options);
+    model_fl = is_lambda_poised(model, constraints, options);
     model_old = is_old(model, options);
     success = false;
     if ~model_complete && (~model_old || ~model_fl)

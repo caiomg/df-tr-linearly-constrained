@@ -18,7 +18,7 @@ if has_distant_points(model, options) || is_old(model, options)
     model = rebuild_model(model, options);
     model_changed = true;
 end
-while ~is_lambda_poised(model, options)
+while ~is_lambda_poised(model, constraints, options)
     model = ensure_improvement(model, funcs, constraints, options);
     model_changed = true;
 end
@@ -34,7 +34,7 @@ while (model.radius > mu*measure)
         model = rebuild_model(model, options);
         model_changed = true;
     end
-    while ~is_lambda_poised(model, options)
+    while ~is_lambda_poised(model, constraints, options)
         model = ensure_improvement(model, funcs, constraints, options);
         model_changed = true;
     end

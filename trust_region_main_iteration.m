@@ -38,7 +38,7 @@ for iter = 1:iter_max
     if (model.radius < tol_radius)
         break
     end
-    if true || is_lambda_poised(model, options)
+    if true || is_lambda_poised(model, constraints, options)
         % Move among points that are part of the model
         model = move_to_best_point(model, constraints);
         fval_current = model.center_fvalues();
@@ -63,7 +63,7 @@ for iter = 1:iter_max
     else
         criticality_step_performed = false;
     end
-    iteration_model_fl = is_lambda_poised(model, options);
+    iteration_model_fl = is_lambda_poised(model, constraints, options);
 
     % Print summary
     if print_level >= 1
