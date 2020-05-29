@@ -40,10 +40,8 @@ for n = 1:63
     options = [];
     options.iter_max = 1000; % just not to hang. REMOVE
     try
-        [x_trust, fvalue_trust] = trust_region({f}, x0, f(x0), constraints, options);
-        f_count_trust = counter.get_count();
+        [x_trust, fvalue_trust] = trust_region({f}, x0, [], constraints, options);
         results_linearly_constrained(n).fx = fvalue_trust;
-        results_linearly_constrained(n).count = f_count_trust;
         [ineqs_violation, eqs_violation, bounds_violation] = ...
             linear_constraints_violation(x_trust, constraints);
         total_violation = bounds_violation + eqs_violation + ineqs_violation;
@@ -52,17 +50,17 @@ for n = 1:63
         results_linearly_constrained(n).exception = [];
     catch this_exception
         results_linearly_constrained(n).fx = inf;
-        results_linearly_constrained(n).count = counter.get_count();
         results_linearly_constrained(n).exception = this_exception;
         results_linearly_constrained(n).viol = nan;
     end
+    results_linearly_constrained(n).count = counter.get_count();
 
     counter.reset_count();
     terminate_cutest_problem(problem_name, directory);
     
     
 
-    print_results_only(problem_name, solution - fvalue_trust, f_count_trust,  results_linearly_constrained(n).viol)
+    print_results_only(problem_name, solution - fvalue_trust, results_linearly_constrained(n).count,  results_linearly_constrained(n).viol)
 
 
 end

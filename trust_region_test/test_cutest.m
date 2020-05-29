@@ -9,7 +9,7 @@ problem_name = 'ROSENBR';
 problem_name = 'HS4';
 % problem_name = 'HS1';
 % problem_name = 'HS45';
-problem_name = 'DENSCHNE';
+problem_name = 'HS35MOD';
 % problem_name = 'OSBORNEB';
 % problem_name = 'MDHOLE';
 
@@ -52,7 +52,7 @@ tr_options = struct('tol_radius', 1e-4, 'tol_f', 1e-5, ...
 tr_options = []
 tr_options.print_level = 1;
 tr_options.debug = true;
-tr_options.tol_radius = 1e-6;
+% tr_options.tol_radius = 1e-6;
 tr_options.inspect_iteration = 25;
 %tr_options.pivot_threshold = 0.05;
 
@@ -66,17 +66,6 @@ fx = f(x0); %fx = [f(x0), f(x1)];
 [x_trust, fvalue_trust] = trust_region({f}, x_tr, [], constraints, tr_options)
 
 f_count_trust = counter.get_count()
-counter.reset_count()
-
-
-% tl1 = @() l1_penalty_article(f, all_con, x0, mu, epsilon, delta, Lambda);
-% tmlab = @() fmincon(f, x0,[],[],[],[],[],[], nlcon, fmincon_options);
-% time_exact_penalty = timeit(tl1)
-% time_fmincon = timeit(tmlab)
-
-fminsearch_options = optimset('Display', 'on', 'MaxFunEvals', 1e4);
-[x_fminsearch, fval_fminsearch] = fminsearch(f, x0, fminsearch_options)
-f_count_search = counter.get_count()
 counter.reset_count()
 
 terminate_cutest_problem(problem_name, '../my_problems/')
