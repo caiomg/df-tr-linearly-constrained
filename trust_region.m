@@ -71,8 +71,7 @@ if ~is_feasible_wrt_linear_constraints(initial_points(:, 1), constraints, tolera
     warning('cmg:initial_point_infeasible', ...
             'Initial point infeasible. Point will be replaced');
         initial_points(:, 1) = ...
-            project_to_feasible_polytope(initial_points(:, 1), Aineq, ...
-                                         bineq, Aeq, beq, lb, ub);
+            project_to_feasible_polytope(initial_points(:, 1), constraints);
     if ~isempty(initial_fvalues)
         initial_fvalues(:, 1) = ...
             evaluate_new_fvalues(funcs, initial_points(:, 1));
@@ -107,7 +106,7 @@ if n_initial_points == 1
         second_point = initial_points(:, 1) + N*(perturbation - 0.5)*initial_radius;
 
         second_point = ...
-            project_to_feasible_polytope(second_point, Aineq, bineq, Aeq, beq, lb, ub);
+            project_to_feasible_polytope(second_point, constraints);
 
         initial_points(:, 2) = second_point;
         n_initial_points = 2;
