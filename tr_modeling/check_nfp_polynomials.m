@@ -2,6 +2,7 @@ function result = check_nfp_polynomials(model)
 
     points_shifted = model.points_shifted;
     nfp_polynomials = model.pivot_polynomials;
+    pivot_values = model.pivot_values;
     [dim, points_num] = size(points_shifted);
     tol = 1e-6;
     result = 0;
@@ -15,12 +16,16 @@ function result = check_nfp_polynomials(model)
         end
         for poly_i = block_beginning:points_num
             val = evaluate_polynomial(nfp_polynomials(poly_i), points_shifted(:, point_i));
-            if point_i == poly_i
+            if point_i == poly_i && ~isinf(pivot_values(poly_i))
                 correct_val = 1;
             else
                 correct_val = 0;
             end
             val_error = correct_val - val;
+            if isinf(pivot_values(poly_i)) && val_error ~= 0
+                error('cmg:nonzero_dummy_polynomial', ...
+                      'Dummy polynomial should render zero');
+            end
             result = result + abs(val_error);
         end
     end
