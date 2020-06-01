@@ -45,7 +45,6 @@ for n = 1:63
         [ineqs_violation, eqs_violation, bounds_violation] = ...
             linear_constraints_violation(x_trust, constraints);
         total_violation = bounds_violation + eqs_violation + ineqs_violation;
-        total_violation = bound_violation + eqs_violation + ineqs_violation;
         results_linearly_constrained(n).viol = total_violation;
         results_linearly_constrained(n).exception = [];
     catch this_exception
