@@ -16,7 +16,6 @@ function result = has_distant_points(model, options)
     % Extra-distance allowed for completing the linear block
     allowed_distance_extra = radius*radius_factor_extra;
 
-    pt_i = 0;
     for n = 1:length(pivot_values)
         if ~isfinite(pivot_values(n))
             % Just advance n out of this block
@@ -27,15 +26,14 @@ function result = has_distant_points(model, options)
             error('cmg:pivot_zero', ...
                   'Found pivot zero associated with a point');
         else
-            pt_i = pt_i + 1;
-            distance = norm(points_abs(:, pt_i) - center_x, inf);
+            distance = norm(points_abs(:, n) - center_x, inf);
             if distance > allowed_distance_extra ...
-                    || (pt_i > linear_terms_num && distance > allowed_distance)
+                    || (n > linear_terms_num && distance > allowed_distance)
                 result = true;
                 break
             end
         end
-        if pt_i == point_num
+        if n == point_num
             result = false;
             break
         end
