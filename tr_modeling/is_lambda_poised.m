@@ -1,4 +1,4 @@
-function result = is_lambda_poised(model, constraints, options)
+function [result, barely_linear] = is_lambda_poised(model, constraints, options)
     % IS_LAMBDA_POISED tests wether a model is lambda-poised for the
     % given options
     %
@@ -9,19 +9,18 @@ function result = is_lambda_poised(model, constraints, options)
     radius = model.radius;
     points_num = model.number_of_points();
     x_center = model.center_point();
+    dim = size(x_center, 1); %dimension
 
     tolerance = min(1, radius)*relative_pivot_threshold;
-    true_dim = degrees_of_freedom(constraints, x_center, tolerance);
 
-    if strcmp(options.basis, 'dummy')
-        % If not modeling...
-        result = true;
+    result = strcmp(options.basis, 'dummy') || points_num >= dim + 1;
+    
+    if ~result
+        true_dim = degrees_of_freedom(constraints, x_center, tolerance);
+        barely_linear = points_num >= true_dim + 1;
+        result = result || barely_linear;
     else
-        if points_num >= true_dim + 1
-            % Fully linear, already
-            result = true;
-        else
-            result = false;
-        end
+        barely_linear = false;
     end
+    
 end
