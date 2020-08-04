@@ -14,7 +14,7 @@ for n = 1:63
     terminate_cutest_problem()
 
     problem_name = solutions_linearly_constrained(n).name;
-    solution = solutions_linearly_constrained.fval;
+    solution = solutions_linearly_constrained(n).fval;
     results_linearly_constrained(n).name = problem_name;
     
     [prob, prob_interface] = setup_cutest_problem(problem_name, '../my_problems/');
