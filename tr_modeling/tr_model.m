@@ -20,7 +20,8 @@ classdef tr_model < handle
             self.fvalues = fvalues;
             self.radius = radius;
             self.tr_center = 1;
-            dim = size(points, 1);
+            [dim, n_points] = size(points);
+            self.pivot_values = ones(1, n_points);
             self.cache_max = 3*dim^2;
         end
         function x = center_point(self)
