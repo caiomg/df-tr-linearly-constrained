@@ -22,22 +22,23 @@ function [model, succeeded, pt_i] = ...
         block_beginning = dim+2;
         block_end = last_p;
     end
-    max_val = 0;
+    max_polynomial_value = 0;
     max_poly_i = 0;
     for poly_i = block_end:-1:block_beginning
         if allow_exchange_center || poly_i ~= center_i
-            val = model.pivot_values(poly_i)*...
-                  evaluate_polynomial(pivot_polynomials(poly_i), new_point_shifted);
-            if abs(max_val) < abs(val)
-                max_val = val;
+            polynomial_value = ...
+                evaluate_polynomial(pivot_polynomials(poly_i), new_point_shifted);
+                  
+            if abs(max_polynomial_value) < abs(polynomial_value)
+                max_polynomial_value = polynomial_value;
                 max_poly_i = poly_i;
             end
         end
     end
     if max_poly_i > 0
-        new_pivot_val = model.pivot_values(max_poly_i)*max_val;
+        new_pivot_val = max_polynomial_value*model.pivot_values(max_poly_i);
         if ~isfinite(new_pivot_val) ...
-           && isfinite(max_val) && isfinite(model.pivot_values(max_poly_i))
+           && isfinite(max_polynomial_value) && isfinite(model.pivot_values(max_poly_i))
              % adjustment
              new_pivot_val = sign(new_pivot_val)*realmax;
              warning('cmg:geometry_degenerating', ...
