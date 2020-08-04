@@ -8,6 +8,8 @@ function [model, success] = improve_model_nfp(model, funcs, constraints, options
     pivot_threshold = rel_pivot_threshold*min(1, radius);
     points_shifted = model.points_shifted;
     [dim, p_ini] = size(points_shifted);
+    true_dim = degrees_of_freedom(constraints, model.points_abs(:, 1), pivot_threshold);
+
     shift_center = model.points_abs(:, 1);
     tr_center = model.tr_center;
     tr_center_abs = model.points_abs(:, tr_center);
@@ -32,11 +34,12 @@ function [model, success] = improve_model_nfp(model, funcs, constraints, options
     if p_ini < dim + 1
         % The model is not yet fully linear
         block_beginning = 2;
-        block_end = p_ini + 1; % actually dim + 1
+        block_end = dim + 1;
     else
         % We can add a point to the quadratic block
         block_beginning = dim + 2;
-        block_end = p_ini + 1; % actually (dim + 1)*(dim + 2)/2
+        block_end = (dim + 1)*(dim + 2)/2;
+        block_end = min(block_end, p_ini + dim); % practical override
     end
     next_position = p_ini + 1;
     radius_used = radius;
