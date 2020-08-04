@@ -1,5 +1,5 @@
 function [model, exitflag] = change_tr_center(model, new_point, ...
-                                              new_fvalues, options)
+                                              new_fvalues, constraints, options)
 % CHANGE_TR_CENTER - accepts a step of the algorithm
 % Calls the appropriate functions for model maintenance so the
 % trust-region is shifted to this new center
@@ -40,8 +40,10 @@ function [model, exitflag] = change_tr_center(model, new_point, ...
             % Model needs rebuilding
             model.points_abs(:, end+1) = new_point;
             model.fvalues(:, end+1) = new_fvalues;
-            model.tr_center = size(model.points_abs, 2); % Last
-            model = rebuild_model(model, options);
+            last_point_index = size(model.points_abs, 2); % Last
+            model.tr_center = last_point_index;
+            model.pivot_values(last_point_index) = 1;
+            model = rebuild_model(model, constraints, options);
             exitflag = STATUS_MODEL_REBUILT;
         end
     end
