@@ -9,11 +9,15 @@ function [model, exitflag] = ensure_improvement(model, funcs, constraints, optio
     STATUS_MODEL_REBUILT = 4;    
     
     model_complete = is_complete(model);
-    model_fl = is_lambda_poised(model, constraints, options);
+    [model_fl, model_incomplete_fl] = is_lambda_poised(model, constraints, options);
     model_old = is_old(model, options);
     success = false;
     if ~model_complete && (~model_old || ~model_fl)
         % Calculate a new point to add
+        if model_incomplete_fl
+            model = fill_linear_block(model);
+            'test';
+        end
         [model, success] = improve_model_nfp(model, funcs, constraints, options);
         if success
             exitflag = STATUS_POINT_ADDED;
@@ -26,7 +30,7 @@ function [model, exitflag] = ensure_improvement(model, funcs, constraints, optio
         end
     end
     if ~success
-        model = rebuild_model(model, options); 
+        model = rebuild_model(model, constraints, options);
         if model_old
             exitflag = STATUS_OLD_MODEL_REBUILT;
         else
