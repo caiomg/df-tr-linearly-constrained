@@ -1,4 +1,4 @@
-function model = rebuild_model(model, options)
+function model = rebuild_model(model, constraints, options)
 % REBUILD_MODEL - re-selects the points to include in the model
 
     % Region considered to use points
@@ -16,13 +16,19 @@ function model = rebuild_model(model, options)
     end
 
     % All points we know
-    points_abs = [model.points_abs, model.cached_points];
-    fvalues = [model.fvalues, model.cached_fvalues];
-    [dim, p_ini] = size(points_abs); % dimension, number of points
+    [dim, p_ini] = size(model.points_abs); % dimension, number of points
+    % Reorder so center is first
+    point_order = [model.tr_center, 1:model.tr_center-1, model.tr_center+1:p_ini];
+    points_abs = model.points_abs(:, point_order);
+    fvalues = model.fvalues(:, point_order);
+    old_pivots = model.pivot_values(point_order);
     
-    % Center will be first
-    points_abs(:, [1, model.tr_center]) = points_abs(:, [model.tr_center, 1]);
-    fvalues(:, [1, model.tr_center]) = fvalues(:, [model.tr_center, 1]);
+    actual_points = ~isinf(old_pivots) & (old_pivots ~= 0);
+    points_abs = [points_abs(:, actual_points), model.cached_points];
+    fvalues = [fvalues(:, actual_points), model.cached_fvalues];
+    p_ini = sum(actual_points); % After removing dummy points
+
+    true_dim = degrees_of_freedom(constraints, points_abs(:, 1), pivot_threshold);
     
     % Calculate distances
     points_shifted = zeros(dim, p_ini);
@@ -63,21 +69,34 @@ function model = rebuild_model(model, options)
     pivot_values(1) = 1;
     poly_i = 2;
     for iter = 2:polynomials_num
+
+
+        if last_pt_included == true_dim + 1 && poly_i <= dim+1
+            for z = (true_dim+2):(dim+1)
+                pivot_polynomials(poly_i) = polynomial_zero(dim);
+                points_abs(:, poly_i) = zeros(dim, 1);
+                points_shifted(:, poly_i) = zeros(dim, 1);
+                fvalues(:, poly_i) = inf;
+                pivot_values(poly_i) = inf;
+                poly_i = poly_i + 1;
+                last_pt_included = last_pt_included + 1;
+            end
+            'test';
+        end
+
         % Gaussian elimination (using previuos points)
         pivot_polynomials(poly_i) = ...
             orthogonalize_to_other_polynomials(pivot_polynomials, ...
                                                     poly_i, ...
                                                     points_shifted, ...
-                                                    last_pt_included);
+                                                    last_pt_included);        
+        
         if poly_i <= dim+1
             block_beginning = 2;
             block_end = dim+1;
             % Linear block -- we allow more points (*2)
             maxlayer = min(radius_factor_linear_block, distances(end)/radius);
             if iter > dim+1
-                % We already tested all linear terms
-                % We do not have points to build a FL model
-                % How did this happen??? see Comment [1]
                 break
             end
         else
@@ -150,11 +169,10 @@ function model = rebuild_model(model, options)
             % Moving this polynomial to the end of the block
             pivot_polynomials(poly_i:block_end) = ...
                 pivot_polynomials([poly_i+1:block_end, poly_i]);
-            % Comment [1]:
-            % If we are on the linear block, this means we won't be
-            % able to build a Fully Linear model
         end
-    
+        if ~(poly_i == last_pt_included + 1)
+            'debug';
+        end
     end
     
     model.tr_center = 1;
@@ -172,5 +190,3 @@ function model = rebuild_model(model, options)
                                    + cache_size);
 
 end
-
-

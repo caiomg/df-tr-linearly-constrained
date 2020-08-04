@@ -15,7 +15,7 @@ tol_f = options.tol_f;
 initial_radius = model.radius;
 model_changed = false;
 if has_distant_points(model, options) || is_old(model, options)
-    model = rebuild_model(model, options);
+    model = rebuild_model(model, constraints, options);
     model_changed = true;
 end
 while ~is_lambda_poised(model, constraints, options)
@@ -31,7 +31,7 @@ while (model.radius > mu*measure)
 
     model_changed = false;
     if has_distant_points(model, options) || is_old(model, options)
-        model = rebuild_model(model, options);
+        model = rebuild_model(model, constraints, options);
         model_changed = true;
     end
     while ~is_lambda_poised(model, constraints, options)
