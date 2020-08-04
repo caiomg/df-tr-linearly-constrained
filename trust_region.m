@@ -81,9 +81,9 @@ end
 rel_pivot_threshold = options.pivot_threshold;
 initial_radius = options.initial_radius;
 
-if degrees_of_freedom(constraints, initial_points(:, 1), ...
-                      rel_pivot_threshold*initial_radius) < dim
-    error('cmg:not_implemented', 'Bounds too tight. Not yet implemented');
+fixed_variables = ~isempty(find(ub  <= lb, 1));
+if fixed_variables
+    %error('cmg:not_implemented', 'Fixed variables: Not yet implemented');
 end
 
 n_initial_points = size(initial_points, 2);
@@ -132,8 +132,8 @@ end
 
 % Initializing model structure
 model = tr_model(initial_points, initial_fvalues, initial_radius);
-model = rebuild_model(model, options);
-model = move_to_best_point(model, constraints);
+model = rebuild_model(model, constraints, options);
+model = move_to_best_point(model, constraints, tolerances);
 
 model.modeling_polynomials = compute_polynomial_models(model);
 if model.number_of_points < 2

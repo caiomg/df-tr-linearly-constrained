@@ -34,13 +34,16 @@ sum_rho = 0;
 sum_rho_sqr = 0;
 delay_reduction = 0;
 
+assert(is_feasible_wrt_linear_constraints(model.points_abs(:, 1), constraints, tolerances))
+assert(is_feasible_wrt_linear_constraints(model.points_abs(:, 2), constraints, tolerances))
+
 for iter = 1:iter_max
     if (model.radius < tol_radius)
         break
     end
     if true || is_lambda_poised(model, constraints, options)
         % Move among points that are part of the model
-        model = move_to_best_point(model, constraints);
+        model = move_to_best_point(model, constraints, tolerances);
         fval_current = model.center_fvalues();
         x_current = model.center_point();
     end
@@ -73,6 +76,9 @@ for iter = 1:iter_max
     % Compute step
     [trial_point, predicted_red] = solve_tr_subproblem(model, constraints, options);
     trial_step = trial_point - x_current;
+    if ~is_feasible_wrt_linear_constraints(trial_point, constraints, tolerances)
+        'debug';
+    end
 
     if ((predicted_red < tol_radius*1e-2) || ...
         (predicted_red < tol_radius*abs(fval_current) && ...
@@ -102,6 +108,7 @@ for iter = 1:iter_max
             % Including this new point as the TR center
             [model, mchange_flag] = change_tr_center(model, trial_point, ...
                                                      fval_trial, ...
+                                                     constraints, ...
                                                      options);
             % this mchange_flag is not being used (rho > eta_1)
             if ~iteration_model_fl && mchange_flag == 4
@@ -125,6 +132,8 @@ for iter = 1:iter_max
         sum_rho = sum_rho + rho;
         sum_rho_sqr = sum_rho_sqr + rho^2;
     end
+
+    nfp_error = check_nfp_polynomials(model);
 
 
     % From time to time a step may end a bit outside the TR
